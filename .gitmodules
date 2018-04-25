@@ -12,4 +12,4 @@
 	ignore = dirty
 [submodule "SnoopSnitch/patchanalysis"]
 	path = SnoopSnitch/patchanalysis
-	url = https://opensource.srlabs.de/git/patchalyzer-module
+	url = https://opensource.srlabs.de/git/patchanalysis-module
