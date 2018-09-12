@@ -53,8 +53,5 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'com.android.support:appcompat-v7:25.2.0'
-    //adding safetynet dependency here
-    implementation 'com.google.android.gms:play-services-safetynet:11.0.0'
-    implementation 'io.jsonwebtoken:jjwt:0.7.0'
     testCompile 'junit:junit:4.12'
 }
