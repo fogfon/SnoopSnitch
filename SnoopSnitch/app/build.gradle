@@ -44,6 +44,15 @@ android {
     }
     useLibrary 'org.apache.http.legacy'
 
+    flavorDimensions "certifiedBuildCheck"
+    productFlavors {
+        safetynet {
+            dimension "certifiedBuildCheck"
+        }
+        nobuildcheck {
+            dimension "certifiedBuildCheck"
+        }
+    }
 }
 
 dependencies {
