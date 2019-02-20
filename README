@@ -1,10 +1,10 @@
 SnoopSnitch
 ===========
 
-This is the SnoopSnitch source repository. SnoopSnitch collects and analyzes
-mobile radio data to make you aware of your mobile network security and to warn
-you about threats like fake base stations (IMSI catchers), user tracking and
-over-the-air updates.
+This is the SnoopSnitch source repository forked and patched by fogfon.
+SnoopSnitch collects and analyzes mobile radio data to make you aware
+of your mobile network security and to warn you about threats like fake
+base stations (IMSI catchers), user tracking and over-the-air updates
 
 License
 -------
