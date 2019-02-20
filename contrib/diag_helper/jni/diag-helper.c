@@ -49,6 +49,20 @@ loghex(const char *desc, char *buf, size_t len)
         free(hexbuf);
 }
 
+/* 
+ * Android 7.0: switch_logging_mode structure
+ * Reference: https://android.googlesource.com/kernel/msm.git/+/android-7.1.0_r0.3/drivers/char/diag/diagchar.h
+ */    
+#define DIAG_CON_APSS		(0x0001)	/* Bit mask for APSS */
+#define DIAG_CON_MPSS		(0x0002)	/* Bit mask for MPSS */
+#define DIAG_CON_LPASS		(0x0004)	/* Bit mask for LPASS */
+#define DIAG_CON_WCNSS		(0x0008)	/* Bit mask for WCNSS */
+#define DIAG_CON_SENSORS	(0x0010)	/* Bit mask for Sensors */
+#define DIAG_CON_NONE		(0x0000)	/* Bit mask for No SS*/
+#define DIAG_CON_ALL		(DIAG_CON_APSS | DIAG_CON_MPSS \
+				| DIAG_CON_LPASS | DIAG_CON_WCNSS \
+				| DIAG_CON_SENSORS)
+
 struct diag_logging_mode_param_t {
 	uint32_t req_mode;
 	uint32_t peripheral_mask;
@@ -70,6 +84,8 @@ open_diag_dev(void)
                 goto exit;
         }
 
+        logmsg(ANDROID_LOG_DEBUG, "success opening diag device");
+
         const unsigned long DIAG_IOCTL_SWITCH_LOGGING = 7;
         const int MEMORY_DEVICE_MODE = 2;
 
@@ -81,9 +97,24 @@ open_diag_dev(void)
         //  have its parameter passed as a pointer. I don't know how to detect
         //  that reliably, so I brute-force the right method.
         rv = ioctl(diag_fd, DIAG_IOCTL_SWITCH_LOGGING, MEMORY_DEVICE_MODE);
+
+        logmsg(ANDROID_LOG_DEBUG, "diag_logging_mode_param_t MEMORY_DEVICE_MODE passed");
+
         if (rv < 0) {
             olderrno = errno;
             rv = ioctl(diag_fd, DIAG_IOCTL_SWITCH_LOGGING, (void *)&stMode);
+        }
+
+        if (rv < 0) {
+	    /* Android 7.0 mode
+	    * * Reference: https://android.googlesource.com/kernel/msm.git/+/android-7.1.0_r0.3/drivers/char/diag/diagchar_core.c
+	    * */
+	    struct diag_logging_mode_param_t new_mode;
+            new_mode.req_mode = MEMORY_DEVICE_MODE;
+            new_mode.peripheral_mask = DIAG_CON_ALL;
+            new_mode.mode_param = 0;
+            rv = ioctl(diag_fd, DIAG_IOCTL_SWITCH_LOGGING, (char *)& new_mode);
+            logmsg(ANDROID_LOG_DEBUG, "diag_logging_mode_param_t DIAG_CON_ALL passed");
         }
 
         if (rv < 0) {
